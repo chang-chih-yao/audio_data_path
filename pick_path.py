@@ -34,7 +34,7 @@ def prepend_multiple_lines(file_name, list_of_lines):
     # Rename dummy file as the original file
     os.rename(dummy_file, file_name)
 
-def pattern_define():
+def all_pattern_define():
     if(os.path.isdir('audio_data_path_auto_gen_patterns/')):
         if(os.path.isdir('define_all/')):
             shutil.rmtree('define_all/')
@@ -50,7 +50,7 @@ def pattern_define():
     #     shutil.rmtree('audio_data_path_auto_gen_patterns/')
     #     shutil.copytree('define_all/', 'audio_data_path_auto_gen_patterns/')
 
-def input_pattern_define():
+def input_output_pattern_define():
     if(os.path.isdir('gen_pick_path/')):
         for dirPath, dirNames, fileNames in os.walk('gen_pick_path/'):
             # print(len(fileNames))
@@ -89,6 +89,7 @@ def gen_pick_path():
                 lines = ptr_f.readlines()
             
             start = 0
+            is_usd = 0
             i2s_output_find = 0
             pdm_output_find = 0
             sdw_output_find = 0
@@ -112,6 +113,12 @@ def gen_pick_path():
                             if item.split('"')[-2].split(' ')[-1] == output_node:
                                 sdw_output_find = 1
                                 break
+
+                    if item.find('usd') != -1 or item.find('ulsd') != -1:
+                        if is_usd == 0:
+                            is_usd = 1
+                            input_type = ['`pattern_define(AUDIO_DATA_PATH_USD)']
+                            prepend_multiple_lines(os.path.join(dirPath, f), input_type)
                     
                     if item.find('Input_Node') != -1:
                         for input_node in i2s_input_list:
@@ -163,11 +170,11 @@ if __name__ == '__main__':
     print('Input 1 for adding pattern_define, 2 for gen_pick_path, 3 for adding pattern_define(input type)')
     choice = input()
     if choice == '1':
-        pattern_define()
+        all_pattern_define()
     elif choice == '2':
         gen_pick_path()
     elif choice == '3':
-        input_pattern_define()
+        input_output_pattern_define()
 
 
                 
